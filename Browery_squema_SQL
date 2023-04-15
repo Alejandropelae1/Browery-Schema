@@ -1,0 +1,240 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mybrewerylist
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mybrewerylist
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mybrewerylist` DEFAULT CHARACTER SET utf8mb3 ;
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8mb3 ;
+USE `mybrewerylist` ;
+
+-- -----------------------------------------------------
+-- Table `mybrewerylist`.`breweries`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mybrewerylist`.`breweries` (
+  `id` INT NOT NULL,
+  `name` TEXT NULL DEFAULT NULL,
+  `address1` TEXT NULL DEFAULT NULL,
+  `address2` TEXT NULL DEFAULT NULL,
+  `city` TEXT NULL DEFAULT NULL,
+  `state` TEXT NULL DEFAULT NULL,
+  `code` INT NULL DEFAULT NULL,
+  `country` TEXT NULL DEFAULT NULL,
+  `phone` TEXT NULL DEFAULT NULL,
+  `website` TEXT NULL DEFAULT NULL,
+  `descript` LONGTEXT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `mybrewerylist`.`location`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mybrewerylist`.`location` (
+  `id` INT NOT NULL,
+  `brewery_id` INT NOT NULL,
+  `latitude` VARCHAR(25) NOT NULL,
+  `longitude` VARCHAR(25) NOT NULL,
+  `accuracy` VARCHAR(50) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `mybrewerylist`.`categories`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mybrewerylist`.`categories` (
+  `id` INT NOT NULL,
+  `cat_name` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `mybrewerylist`.`styles`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mybrewerylist`.`styles` (
+  `id` INT NOT NULL,
+  `cat_id` INT NOT NULL,
+  `style_name` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_cat_id_idx` (`cat_id` ASC) VISIBLE,
+  CONSTRAINT `fk_cat_id`
+    FOREIGN KEY (`cat_id`)
+    REFERENCES `mybrewerylist`.`categories` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `mybrewerylist`.`beers`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mybrewerylist`.`beers` (
+  `id` INT NOT NULL,
+  `brewery_id` INT NULL DEFAULT NULL,
+  `cat_id` INT NOT NULL,
+  `style_id` INT NOT NULL,
+  `abv` DECIMAL(9,2) NOT NULL,
+  `ibu` INT NOT NULL,
+  `upc` INT NOT NULL,
+  `description` VARCHAR(1000) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_brewery_id_idx` (`brewery_id` ASC) VISIBLE,
+  INDEX `fk_styles_style_id_idx` (`style_id` ASC) VISIBLE,
+  CONSTRAINT `fk_brew_id`
+    FOREIGN KEY (`brewery_id`)
+    REFERENCES `mybrewerylist`.`breweries` (`id`),
+  CONSTRAINT `fk_brewery_id`
+    FOREIGN KEY (`brewery_id`)
+    REFERENCES `mybrewerylist`.`location` (`id`),
+  CONSTRAINT `fk_cat_brewery_id`
+    FOREIGN KEY (`brewery_id`)
+    REFERENCES `mybrewerylist`.`categories` (`id`),
+  CONSTRAINT `fk_styles_style_id`
+    FOREIGN KEY (`style_id`)
+    REFERENCES `mybrewerylist`.`styles` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `mybrewerylist`.`breweries_staging`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mybrewerylist`.`breweries_staging` (
+  `id` INT NULL DEFAULT NULL,
+  `name` TEXT NULL DEFAULT NULL,
+  `address1` TEXT NULL DEFAULT NULL,
+  `address2` TEXT NULL DEFAULT NULL,
+  `city` TEXT NULL DEFAULT NULL,
+  `state` TEXT NULL DEFAULT NULL,
+  `code` TEXT NULL DEFAULT NULL,
+  `country` TEXT NULL DEFAULT NULL,
+  `phone` TEXT NULL DEFAULT NULL,
+  `website` TEXT NULL DEFAULT NULL,
+  `descript` TEXT NULL DEFAULT NULL)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `mybrewerylist`.`categories_staging`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mybrewerylist`.`categories_staging` (
+  `id` INT NOT NULL,
+  `cat_name` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `mybrewerylist`.`fast_food_staging`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mybrewerylist`.`fast_food_staging` (
+  `ï»¿id` INT NULL DEFAULT NULL,
+  `name` TEXT NULL DEFAULT NULL,
+  `categories` TEXT NULL DEFAULT NULL,
+  `primaryCategories` TEXT NULL DEFAULT NULL,
+  `sourceURLs` TEXT NULL DEFAULT NULL,
+  `websites` TEXT NULL DEFAULT NULL,
+  `keys` TEXT NULL DEFAULT NULL,
+  `dateAdded` TEXT NULL DEFAULT NULL,
+  `dateUpdated` TEXT NULL DEFAULT NULL)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `mybrewerylist`.`location_staging`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mybrewerylist`.`location_staging` (
+  `id` INT NOT NULL,
+  `brewery_id` INT NOT NULL,
+  `latitude` VARCHAR(25) NOT NULL,
+  `longitude` VARCHAR(25) NOT NULL,
+  `accuracy` VARCHAR(50) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `mybrewerylist`.`styles_staging`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mybrewerylist`.`styles_staging` (
+  `id` INT NOT NULL,
+  `cat_id` INT NOT NULL,
+  `style_name` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+USE `mydb` ;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`addres`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`addres` (
+  `id` INT NOT NULL,
+  `Addres` VARCHAR(200) NOT NULL,
+  `city` VARCHAR(45) NOT NULL,
+  `country` VARCHAR(2) NOT NULL,
+  `postalcode` VARCHAR(10) NOT NULL,
+  `state` VARCHAR(2) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`fast_food`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`fast_food` (
+  `id` INT NOT NULL,
+  `Name` VARCHAR(100) NOT NULL,
+  `Addres_id` INT NOT NULL,
+  `Categories` VARCHAR(1000) NOT NULL,
+  `Primary_category` VARCHAR(50) NOT NULL,
+  `SourceURL` LONGTEXT NOT NULL,
+  `websites` VARCHAR(1000) NOT NULL,
+  `keyss` VARCHAR(100) NOT NULL,
+  `Date_Added` VARCHAR(150) NOT NULL,
+  `Date_updated` VARCHAR(150) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`geolocation`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`geolocation` (
+  `ID` INT NOT NULL,
+  `Addres_id` INT NOT NULL,
+  `Latitude` VARCHAR(8) NOT NULL,
+  `Longitude` VARCHAR(8) NOT NULL,
+  PRIMARY KEY (`ID`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
